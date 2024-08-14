@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instructions de connexion Wi-Fi</title>
+</head>
+<body>
+    <h1>Instructions de connexion Wi-Fi</h1>
+    <audio controls autoplay id="audioPlayer">
+        Votre navigateur ne supporte pas l'élément audio.
+    </audio>
+
+    <script>
+        // Function to get query parameters from the URL
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        // Get the 'audio' parameter from the URL
+        const audioUrl = getQueryParam('audio');
+
+        // Set the audio source if the 'audio' parameter is found
+        if (audioUrl) {
+            document.getElementById('audioPlayer').src = audioUrl;
+        } else {
+            document.body.innerHTML += '<p>Audio non trouvé. Veuillez réessayer.</p>';
+        }
+    </script>
+</body>
+</html>
