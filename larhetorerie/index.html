@@ -302,10 +302,8 @@
                     const wifiQrCodeText = `WIFI:T:WPA;S:${ssid};P:${password};;`;
 
                     // Generate the Wi-Fi QR code
-                    const wifiQrCanvas = await generateQRCodeCanvas(
-                        wifiQrCodeText,
-                        "1",
-                    );
+                    const wifiQrCanvas =
+                        await generateQRCodeCanvas(wifiQrCodeText);
 
                     // Generate the Voice Activation QR code using Voice RSS API
                     const audioUrl = await generateAudioUrl(
@@ -314,10 +312,8 @@
                         password,
                     );
                     const hostedPageUrl = `https://card-fi.github.io/captive-portal/index.html?audio=${encodeURIComponent(audioUrl)}`;
-                    const voiceQrCanvas = await generateQRCodeCanvas(
-                        hostedPageUrl,
-                        "2",
-                    );
+                    const voiceQrCanvas =
+                        await generateQRCodeCanvas(hostedPageUrl);
 
                     // Generate the PDF with both QR codes
                     generateAndPrintPDF(
@@ -339,16 +335,15 @@
                 return ttsUrl;
             }
 
-            function generateQRCodeCanvas(text, label) {
+            function generateQRCodeCanvas(text) {
                 return new Promise((resolve, reject) => {
                     const qrCanvas = document.createElement("canvas");
-                    const context = qrCanvas.getContext("2d");
 
                     QRCode.toCanvas(
                         qrCanvas,
                         text,
                         {
-                            color: { dark: "#bbbbbb", light: "#FFFFFF" },
+                            color: { dark: "#000000", light: "#FFFFFF" }, // Dark color for better contrast
                             margin: 2,
                         },
                         (error) => {
@@ -359,17 +354,6 @@
                                 );
                                 reject(error);
                             } else {
-                                // Draw the label number in the center of the QR code
-                                context.font = "bold 40px Arial";
-                                context.fillStyle = "black";
-                                context.textAlign = "center";
-                                context.textBaseline = "middle";
-                                context.fillText(
-                                    label,
-                                    qrCanvas.width / 2,
-                                    qrCanvas.height / 2,
-                                );
-
                                 resolve(qrCanvas);
                             }
                         },
@@ -430,6 +414,18 @@
                         qrY,
                         qrSize,
                         qrSize,
+                    );
+
+                    // Add numbers outside the QR codes
+                    pdf.setFontSize(12);
+                    pdf.text("1", qrXStart - 10, qrY + qrSize / 2 + 3, {
+                        align: "center",
+                    });
+                    pdf.text(
+                        "2",
+                        qrXStart + qrSize + qrSpacing + qrSize + 10,
+                        qrY + qrSize / 2 + 3,
+                        { align: "center" },
                     );
 
                     // Add instruction text centered below the QR codes
