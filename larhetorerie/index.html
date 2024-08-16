@@ -302,8 +302,10 @@
                     const wifiQrCodeText = `WIFI:T:WPA;S:${ssid};P:${password};;`;
 
                     // Generate the Wi-Fi QR code
-                    const wifiQrCanvas =
-                        await generateQRCodeCanvas(wifiQrCodeText);
+                    const wifiQrCanvas = await generateQRCodeCanvas(
+                        wifiQrCodeText,
+                        "1",
+                    );
 
                     // Generate the Voice Activation QR code using Voice RSS API
                     const audioUrl = await generateAudioUrl(
@@ -312,8 +314,10 @@
                         password,
                     );
                     const hostedPageUrl = `https://card-fi.github.io/captive-portal/index.html?audio=${encodeURIComponent(audioUrl)}`;
-                    const voiceQrCanvas =
-                        await generateQRCodeCanvas(hostedPageUrl);
+                    const voiceQrCanvas = await generateQRCodeCanvas(
+                        hostedPageUrl,
+                        "2",
+                    );
 
                     // Generate the PDF with both QR codes
                     generateAndPrintPDF(
@@ -335,14 +339,16 @@
                 return ttsUrl;
             }
 
-            function generateQRCodeCanvas(text) {
+            function generateQRCodeCanvas(text, label) {
                 return new Promise((resolve, reject) => {
                     const qrCanvas = document.createElement("canvas");
+                    const context = qrCanvas.getContext("2d");
+
                     QRCode.toCanvas(
                         qrCanvas,
                         text,
                         {
-                            color: { dark: "#2c5c17", light: "#FFFFFF" },
+                            color: { dark: "#bbbbbb", light: "#FFFFFF" },
                             margin: 2,
                         },
                         (error) => {
@@ -353,6 +359,17 @@
                                 );
                                 reject(error);
                             } else {
+                                // Draw the label number in the center of the QR code
+                                context.font = "bold 40px Arial";
+                                context.fillStyle = "black";
+                                context.textAlign = "center";
+                                context.textBaseline = "middle";
+                                context.fillText(
+                                    label,
+                                    qrCanvas.width / 2,
+                                    qrCanvas.height / 2,
+                                );
+
                                 resolve(qrCanvas);
                             }
                         },
@@ -390,11 +407,12 @@
                     pdf.setLineWidth(0.2);
                     pdf.rect(x, y, cardWidth, cardHeight);
 
-                    // Place Wi-Fi QR code on the left
+                    // Calculate the position for the QR codes
                     const qrXStart =
                         x + (cardWidth - 2 * qrSize - qrSpacing) / 2;
                     const qrY = y + 10;
 
+                    // Place Wi-Fi QR code on the left
                     pdf.addImage(
                         wifiQrDataURL,
                         "PNG",
@@ -417,7 +435,7 @@
                     // Add instruction text centered below the QR codes
                     pdf.setFontSize(10);
                     pdf.text(
-                        `Scannez 1 pour vous connecter,\net 2 pour écouter les identifiants Wi-Fi.`,
+                        `Scanner 1 pour vous connecter,\net 2 pour ajouter un ordinateur portable.`,
                         x + cardWidth / 2,
                         y + cardHeight - 10,
                         { align: "center" },
