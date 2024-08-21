@@ -67,7 +67,6 @@
             if (voiceText) {
                 const decodedVoiceText = decodeURIComponent(voiceText);
                 console.log("Decoded Voice Text:", decodedVoiceText);  // Debugging line
-                alert("Playing: " + decodedVoiceText);  // Debugging line
                 responsiveVoice.speak(decodedVoiceText, "French Female");
             } else {
                 alert("Aucune information vocale n'a été trouvée.");
