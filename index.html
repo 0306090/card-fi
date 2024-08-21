@@ -3,31 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Instructions de connexion Wi-Fi</title>
+    <title>Wi-Fi Voice Assistant</title>
+    <script src="https://code.responsivevoice.org/responsivevoice.js?key=YOUR_API_KEY"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            color: #1c1e21;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            max-width: 400px;
+            width: 90%;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #2c5c17;
+        }
+        p {
+            font-size: 16px;
+            color: #606770;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #2c5c17;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #4b4e38;
+        }
+    </style>
 </head>
 <body>
-    <h1>Instructions de connexion Wi-Fi</h1>
-    <audio controls autoplay id="audioPlayer">
-        Votre navigateur ne supporte pas l'élément audio.
-    </audio>
+    <div class="container">
+        <h1>Bienvenue</h1>
+        <p>Appuyez sur le bouton ci-dessous pour écouter les informations Wi-Fi.</p>
+        <button onclick="playVoice()">Écouter les informations Wi-Fi</button>
+    </div>
 
     <script>
-        // Function to get query parameters from the URL
-        function getQueryParam(param) {
+        function getVoiceText() {
             const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(param);
+            return urlParams.get('voiceText');
         }
 
-        // Get the 'audio' parameter from the URL
-        const audioUrl = getQueryParam('audio');
-
-        // Set the audio source if the 'audio' parameter is found
-        if (audioUrl) {
-            document.getElementById('audioPlayer').src = audioUrl;
-        } else {
-            document.body.innerHTML += '<p>Audio non trouvé. Veuillez réessayer.</p>';
+        function playVoice() {
+            const voiceText = getVoiceText();
+            if (voiceText) {
+                responsiveVoice.speak(decodeURIComponent(voiceText), "French Female");
+            } else {
+                alert("Aucune information vocale n'a été trouvée.");
+            }
         }
+
+        // Automatically play the voice message on page load
+        window.onload = function() {
+            playVoice();
+        };
     </script>
-    <script src="https://code.responsivevoice.org/responsivevoice.js?key=1DwhJhuM"></script>
 </body>
 </html>
