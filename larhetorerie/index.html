@@ -207,6 +207,7 @@
                         content.style.display = "block";
                     } else {
                         alert("Mot de passe incorrect.");
+                        passwordInput.value = ""; // Clear the input after an incorrect attempt
                     }
                 };
             })();
@@ -226,10 +227,19 @@
                         image.style.display = "block";
                         loaderBar.style.animation = `load 3s linear forwards`;
 
+                        // Start a timeout to hide the overlay if OCR takes too long
+                        const timeoutId = setTimeout(() => {
+                            overlay.style.display = "none";
+                            alert(
+                                "Le traitement de l'image a pris trop de temps.",
+                            );
+                        }, 10000); // 10-second timeout
+
                         Tesseract.recognize(e.target.result, "fra", {
                             logger: (m) => console.log(m),
                         })
                             .then(({ data: { text } }) => {
+                                clearTimeout(timeoutId); // Clear timeout on success
                                 processExtractedText(text);
                                 overlay.style.display = "none";
                             })
@@ -305,15 +315,12 @@
                     const wifiQrCanvas =
                         await generateQRCodeCanvas(wifiQrCodeText);
 
-                    // Generate the Voice Activation QR code using Voice RSS API
-                    const audioUrl = await generateAudioUrl(
+                    // Generate the Voice QR code with redirection to the portal
+                    const voiceQrCanvas = await generateVoiceQRCodeCanvas(
                         etablissement,
                         ssid,
                         password,
                     );
-                    const hostedPageUrl = `https://card-fi.github.io/captive-portal/index.html?audio=${encodeURIComponent(audioUrl)}`;
-                    const voiceQrCanvas =
-                        await generateQRCodeCanvas(hostedPageUrl);
 
                     // Generate the PDF with both QR codes
                     generateAndPrintPDF(
@@ -324,18 +331,31 @@
                     );
                 });
 
-            async function generateAudioUrl(etablissement, ssid, password) {
-                // Ajoute une virgule après chaque lettre pour créer une pause
+            async function generateVoiceQRCodeCanvas(
+                etablissement,
+                ssid,
+                password,
+            ) {
+                // Add spaces between each character in the SSID and password
                 const spacedSsid = ssid.split("").join(", ");
                 const spacedPassword = password.split("").join(", ");
 
-                const text = `Bienvenue à ${etablissement}. Pour vous connecter au Wi-Fi, utilisez le réseau nommé, ${spacedSsid}. Le mot de passe est, tout en minuscule, ${spacedPassword}.`;
-                const apiKey = "dcce1b540d3f4c808c0e0ae9dfc00226"; // Remplacez ceci par votre clé API de Voice RSS
-                const ttsUrl = `https://api.voicerss.org/?key=${apiKey}&hl=fr-fr&src=${encodeURIComponent(text)}&r=0`;
-                return ttsUrl;
+                // Properly escape or encode the text
+                const escapedEtablissement = encodeURIComponent(etablissement);
+                const escapedSsid = encodeURIComponent(spacedSsid);
+                const escapedPassword = encodeURIComponent(spacedPassword);
+
+                // Construct the voice text
+                const voiceText = `Bienvenue à ${escapedEtablissement}. Le réseau s'appelle: ${escapedSsid}. Le mot de passe est tout en minuscule: ${escapedPassword}.`;
+
+                // Use the encoded voice text directly in the URL
+                const voiceActivationUrl = `https://card-fi.github.io/captive-portal/?voiceText=${voiceText}`;
+
+                // Generate QR code linking to the voice activation URL
+                return await generateQRCodeCanvas(voiceActivationUrl);
             }
 
-            function generateQRCodeCanvas(text) {
+            async function generateQRCodeCanvas(text) {
                 return new Promise((resolve, reject) => {
                     const qrCanvas = document.createElement("canvas");
 
