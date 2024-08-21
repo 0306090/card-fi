@@ -336,13 +336,15 @@
                 ssid,
                 password,
             ) {
-                // Add spaces between each character in the SSID and password
-                const spacedSsid = ssid.split("").join(", ");
-                const spacedPassword = password.split("").join(", ");
+                // Replace "p" with "pé " in the password to ensure proper pronunciation
+                const spacedPassword = password
+                    .split("")
+                    .join(", ")
+                    .replace(/p/g, "pé ");
 
                 // Properly escape or encode the text
                 const escapedEtablissement = encodeURIComponent(etablissement);
-                const escapedSsid = encodeURIComponent(spacedSsid);
+                const escapedSsid = encodeURIComponent(ssid);
                 const escapedPassword = encodeURIComponent(spacedPassword);
 
                 // Construct the voice text
@@ -461,6 +463,37 @@
                 pdf.autoPrint();
                 window.open(pdf.output("bloburl"), "_blank");
             }
+
+            async function playTextWithTTS(text) {
+                try {
+                    // Assuming you have an endpoint to fetch the audio
+                    const response = await fetch(
+                        `https://api.your-tts.com/generate?text=${encodeURIComponent(
+                            text,
+                        )}`,
+                    );
+
+                    if (!response.ok) {
+                        throw new Error("Failed to fetch TTS audio");
+                    }
+
+                    const audioBlob = await response.blob();
+                    const audioURL = URL.createObjectURL(audioBlob);
+
+                    // Preload the audio
+                    const audio = new Audio(audioURL);
+                    await audio.load();
+
+                    // Play the audio
+                    audio.play();
+                } catch (error) {
+                    console.error("Error playing TTS:", error);
+                }
+            }
+
+            // Example usage
+            const voiceText = `Bienvenue à La Rhétorerie. Le réseau s'appelle: Rhétorerie_WiFi. Le mot de passe est tout en minuscule: p123456.`;
+            playTextWithTTS(voiceText);
         </script>
     </body>
 </html>
