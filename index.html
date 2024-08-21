@@ -52,8 +52,8 @@
 <body>
     <div class="container">
         <h1>Bienvenue</h1>
-        <p>Appuyez sur le bouton ci-dessous pour écouter les identifiants Wi-Fi.</p>
-        <button onclick="playVoice()">Écouter les identifiants Wi-Fi</button>
+        <p>Appuyez sur le bouton ci-dessous pour écouter les informations Wi-Fi.</p>
+        <button onclick="playVoice()">Écouter les informations Wi-Fi</button>
     </div>
 
     <script>
@@ -66,6 +66,8 @@
             const voiceText = getVoiceText();
             if (voiceText) {
                 const decodedVoiceText = decodeURIComponent(voiceText);
+                console.log("Decoded Voice Text:", decodedVoiceText);  // Debugging line
+                alert("Playing: " + decodedVoiceText);  // Debugging line
                 responsiveVoice.speak(decodedVoiceText, "French Female");
             } else {
                 alert("Aucune information vocale n'a été trouvée.");
