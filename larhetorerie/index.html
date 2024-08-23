@@ -2,88 +2,159 @@
 <html lang="fr">
     <head>
         <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>
-            Générateur de cartes Wi-Fi pour hôtels et chambres d'hôtes
-        </title>
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=0.9, maximum-scale=1.0, user-scalable=no"
+        />
+        <title>Card-Fi</title>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
+            rel="stylesheet"
+        />
         <style>
             body {
-                font-family: Arial, sans-serif;
-                background-color: #f0f2f5;
+                font-family: "Poppins", sans-serif;
                 margin: 0;
                 padding: 0;
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                height: 100vh;
-                color: #1c1e21;
+                min-height: 100vh;
+                color: #fff;
+                background: url("https://www.chateaubrachet.com/wp-content/uploads/sites/205/2021/09/tempImagedGKLTi.jpg")
+                    no-repeat center center fixed;
+                background-size: cover;
             }
-            .container {
-                background-color: #fff;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+            .wrapper {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+                height: 100%;
+            }
+
+            .container,
+            .code-container {
+                background: rgba(255, 255, 255, 0.2);
+                box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+                border-radius: 15px;
                 padding: 20px;
-                width: 90%;
-                max-width: 400px;
+                width: 85%;
+                max-width: 350px;
                 text-align: center;
+                backdrop-filter: blur(15px);
+                -webkit-backdrop-filter: blur(15px);
+                border: 1px solid rgba(255, 255, 255, 0.3);
                 position: relative;
+                color: #fff;
+                transition:
+                    opacity 0.5s ease,
+                    transform 0.5s ease,
+                    height 0.5s ease;
+                overflow: hidden;
+                opacity: 0;
+                transform: scale(0.95);
+                height: auto;
             }
-            h1 {
-                font-size: 24px;
-                color: #2c5c17;
+
+            .code-container.active,
+            .container.active {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            h1,
+            h2 {
+                font-size: 22px;
+                color: #fff;
                 margin-bottom: 20px;
+                font-weight: 600;
             }
+
             form {
                 display: flex;
                 flex-direction: column;
-                gap: 15px;
+                gap: 12px;
             }
+
             label {
                 font-size: 14px;
                 text-align: left;
+                color: #fff;
             }
+
             input[type="text"],
             input[type="password"],
             input[type="file"],
             input[type="number"] {
-                padding: 10px;
+                padding: 8px;
                 font-size: 14px;
-                border: 1px solid #dddfe2;
-                width: 100%;
+                border: 1px solid rgba(255, 255, 255, 0.5);
+                border-radius: 8px;
+                background: rgba(255, 255, 255, 0.3);
+                color: #fff;
                 box-sizing: border-box;
+                width: 100%;
+                outline: none;
+                transition: background 0.3s ease;
             }
+
+            input[type="text"]::placeholder,
+            input[type="password"]::placeholder,
+            input[type="file"]::placeholder,
+            input[type="number"]::placeholder {
+                color: rgba(255, 255, 255, 0.7);
+            }
+
+            input[type="text"]:focus,
+            input[type="password"]:focus,
+            input[type="file"]:focus,
+            input[type="number"]:focus {
+                background: rgba(255, 255, 255, 0.5);
+            }
+
             button {
                 padding: 10px;
-                font-size: 16px;
-                background-color: #2c5c17;
+                font-size: 14px;
+                background: #000;
                 color: #fff;
                 border: none;
+                border-radius: 8px;
                 cursor: pointer;
-                transition: background-color 0.3s ease;
+                transition: background 0.3s ease;
             }
+
             button:hover {
-                background-color: #4b4e38;
+                background: #333;
             }
+
             img {
                 max-width: 100%;
                 margin-top: 15px;
                 display: none;
+                border-radius: 10px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
             }
-            #qrcode {
-                margin-top: 20px;
-            }
+
             .loader {
                 width: 100%;
-                background-color: #f3f3f3;
+                background: rgba(255, 255, 255, 0.3);
                 height: 10px;
                 margin-top: 20px;
                 position: relative;
+                border-radius: 5px;
+                overflow: hidden;
             }
+
             .loader-bar {
                 width: 0;
                 height: 100%;
-                background-color: #2c5c17;
+                background-color: #2575fc;
                 animation-fill-mode: forwards;
+                border-radius: 5px;
             }
+
             @keyframes load {
                 from {
                     width: 0%;
@@ -92,101 +163,113 @@
                     width: 100%;
                 }
             }
+
             .loading-text {
                 font-size: 14px;
                 margin-top: 10px;
-                color: #606770;
+                color: #fff;
                 display: none;
             }
+
             .overlay {
                 position: absolute;
                 top: 0;
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background-color: rgba(255, 255, 255, 0.8);
+                background: rgba(0, 0, 0, 0.3);
                 display: flex;
                 justify-content: center;
                 align-items: center;
                 display: none;
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border-radius: 15px;
+                color: #fff;
             }
         </style>
     </head>
     <body>
-        <div id="passwordPrompt">
-            <h2>Veuillez entrer le mot de passe :</h2>
-            <form onsubmit="checkPassword(event)">
-                <input type="password" id="pagePassword" />
-                <button type="submit">Valider</button>
-            </form>
-        </div>
-
-        <div class="container" id="content" style="display: none">
-            <div class="overlay" id="overlay">
-                <div class="loader">
-                    <div class="loader-bar" id="loaderBar"></div>
-                </div>
-                <div class="loading-text">Traitement de l'image...</div>
+        <div class="wrapper">
+            <div class="code-container active" id="passwordPrompt">
+                <h2>Admin > Click n' Connect</h2>
+                <form onsubmit="checkPassword(event)">
+                    <input
+                        type="password"
+                        id="pagePassword"
+                        placeholder="Code partenaire à 4 chiffres"
+                    />
+                    <button type="submit">Continuer</button>
+                </form>
             </div>
-            <h1>Générateur de cartes Wi-Fi pour hôtels et chambres d'hôtes</h1>
-            <form id="wifiForm">
-                <label for="etablissement">Nom de l'établissement:</label>
-                <input
-                    type="text"
-                    id="etablissement"
-                    name="etablissement"
-                    placeholder="Nom de l'établissement"
-                    value="La Rhétorerie"
-                    required
-                />
 
-                <label for="ssid">SSID:</label>
-                <input
-                    type="text"
-                    id="ssid"
-                    name="ssid"
-                    placeholder="Nom du réseau Wi-Fi"
-                    required
-                />
+            <div class="container" id="content" style="display: none">
+                <div class="overlay" id="overlay">
+                    <div class="loader">
+                        <div class="loader-bar" id="loaderBar"></div>
+                    </div>
+                    <div class="loading-text">Traitement de l'image...</div>
+                </div>
+                <h1>Click n' Connect</h1>
+                <form id="wifiForm">
+                    <label for="etablissement">Nom de l'établissement:</label>
+                    <input
+                        type="text"
+                        id="etablissement"
+                        name="etablissement"
+                        placeholder="Nom de l'établissement"
+                        value=""
+                        required
+                    />
 
-                <label for="password">Mot de passe:</label>
-                <input
-                    type="text"
-                    id="password"
-                    name="password"
-                    placeholder="Mot de passe Wi-Fi"
-                    required
-                />
+                    <label for="ssid">SSID:</label>
+                    <input
+                        type="text"
+                        id="ssid"
+                        name="ssid"
+                        placeholder="Nom du réseau Wi-Fi"
+                        required
+                    />
 
-                <label for="numCards">Nombre de cartes à générer:</label>
-                <input
-                    type="number"
-                    id="numCards"
-                    name="numCards"
-                    value="8"
-                    min="1"
-                />
+                    <label for="password">Mot de passe:</label>
+                    <input
+                        type="text"
+                        id="password"
+                        name="password"
+                        placeholder="Mot de passe Wi-Fi"
+                        required
+                    />
 
-                <label for="cameraInput"
-                    >Extraire les identifiants d'une photo :</label
-                >
-                <input
-                    type="file"
-                    accept="image/*"
-                    capture="environment"
-                    id="cameraInput"
-                />
+                    <label for="numCards">Nombre de cartes à générer:</label>
+                    <input
+                        type="number"
+                        id="numCards"
+                        name="numCards"
+                        value="8"
+                        min="1"
+                    />
 
-                <img id="uploadedImage" alt="Image téléchargée" />
-                <button type="submit">Générer et Imprimer le PDF</button>
-            </form>
-            <canvas id="qrcode" style="display: none"></canvas>
-            <canvas id="audioQrcode" style="display: none"></canvas>
+                    <label for="cameraInput"
+                        >Extraire les identifiants d'une photo :</label
+                    >
+                    <input
+                        type="file"
+                        accept="image/*"
+                        capture="environment"
+                        id="cameraInput"
+                    />
 
-            <p class="info-text">
-                Prenez une photo contenant votre SSID et mot de passe Wi-Fi, et
-                laissez l'outil les remplir pour vous.
-            </p>
+                    <img id="uploadedImage" alt="Image téléchargée" />
+                    <button type="submit">Générer et Imprimer le PDF</button>
+                </form>
+                <canvas id="qrcode" style="display: none"></canvas>
+                <canvas id="audioQrcode" style="display: none"></canvas>
+
+                <p class="info-text">
+                    Prenez une photo contenant votre SSID et mot de passe Wi-Fi,
+                    et laissez l'outil les remplir pour vous.
+                </p>
+            </div>
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.0.0/dist/tesseract.min.js"></script>
@@ -194,22 +277,66 @@
         <script src="https://cdn.jsdelivr.net/npm/jspdf/dist/jspdf.umd.min.js"></script>
         <script>
             (function () {
-                const correctPassword = "2271";
+                const codeToEtablissement = {
+                    "MjI3MQ==": "Q2hhdGVhdSBCcmFjaGV0", // 2271 -> Chateau Brachet
+                    "MDM2OQ==": "Q2hhZA==", // 0369 -> Chad
+                    "MzY5MA==": "TmFkaW5l", // 3690 -> Nadine
+                };
+
                 const passwordInput = document.getElementById("pagePassword");
                 const content = document.getElementById("content");
                 const passwordPrompt =
                     document.getElementById("passwordPrompt");
+                const etablissementInput =
+                    document.getElementById("etablissement");
+
+                function encodeText(text) {
+                    const utf8Bytes = new TextEncoder().encode(text);
+                    const binaryString = Array.from(utf8Bytes, (byte) =>
+                        String.fromCharCode(byte),
+                    ).join("");
+                    return btoa(binaryString);
+                }
+
+                function decodeText(encodedText) {
+                    const binaryString = atob(encodedText);
+                    const bytes = Uint8Array.from(binaryString, (char) =>
+                        char.charCodeAt(0),
+                    );
+                    return new TextDecoder().decode(bytes);
+                }
 
                 window.checkPassword = function (event) {
                     event.preventDefault();
-                    if (passwordInput.value === correctPassword) {
-                        passwordPrompt.style.display = "none";
-                        content.style.display = "block";
+                    const enteredCode = encodeText(passwordInput.value); // Base64 encode the entered code
+
+                    if (enteredCode in codeToEtablissement) {
+                        const decodedEtablissement = decodeText(
+                            codeToEtablissement[enteredCode],
+                        );
+                        etablissementInput.value = decodedEtablissement;
+
+                        passwordPrompt.classList.remove("active");
+                        setTimeout(() => {
+                            passwordPrompt.style.display = "none";
+                            content.style.display = "block";
+                            const targetHeight = content.scrollHeight;
+                            passwordPrompt.parentElement.style.height = `${targetHeight}px`;
+                            setTimeout(() => {
+                                content.classList.add("active");
+                            }, 500);
+                        }, 500);
                     } else {
-                        alert("Mot de passe incorrect.");
-                        passwordInput.value = ""; // Clear the input after an incorrect attempt
+                        alert(
+                            "Accès non autorisé. Réessayer ou appeler le 06 17 11 63 83.",
+                        );
+                        passwordInput.value = "";
                     }
                 };
+
+                document.addEventListener("DOMContentLoaded", () => {
+                    passwordPrompt.classList.add("active");
+                });
             })();
 
             const cameraInput = document.getElementById("cameraInput");
@@ -227,19 +354,18 @@
                         image.style.display = "block";
                         loaderBar.style.animation = `load 3s linear forwards`;
 
-                        // Start a timeout to hide the overlay if OCR takes too long
                         const timeoutId = setTimeout(() => {
                             overlay.style.display = "none";
                             alert(
                                 "Le traitement de l'image a pris trop de temps.",
                             );
-                        }, 10000); // 10-second timeout
+                        }, 10000);
 
                         Tesseract.recognize(e.target.result, "fra", {
                             logger: (m) => console.log(m),
                         })
                             .then(({ data: { text } }) => {
-                                clearTimeout(timeoutId); // Clear timeout on success
+                                clearTimeout(timeoutId);
                                 processExtractedText(text);
                                 overlay.style.display = "none";
                             })
@@ -311,18 +437,14 @@
                     );
                     const wifiQrCodeText = `WIFI:T:WPA;S:${ssid};P:${password};;`;
 
-                    // Generate the Wi-Fi QR code
                     const wifiQrCanvas =
                         await generateQRCodeCanvas(wifiQrCodeText);
-
-                    // Generate the Voice QR code with redirection to the portal
                     const voiceQrCanvas = await generateVoiceQRCodeCanvas(
                         etablissement,
                         ssid,
                         password,
                     );
 
-                    // Generate the PDF with both QR codes
                     generateAndPrintPDF(
                         etablissement,
                         wifiQrCanvas,
@@ -336,24 +458,19 @@
                 ssid,
                 password,
             ) {
-                // Replace "p" with "pé " in the password to ensure proper pronunciation
                 const spacedPassword = password
                     .split("")
                     .join(", ")
                     .replace(/p/g, "pé ");
 
-                // Properly escape or encode the text
                 const escapedEtablissement = encodeURIComponent(etablissement);
                 const escapedSsid = encodeURIComponent(ssid);
                 const escapedPassword = encodeURIComponent(spacedPassword);
 
-                // Construct the voice text
                 const voiceText = `Bienvenue à ${escapedEtablissement}. Le réseau s'appelle: ${escapedSsid}. Le mot de passe est tout en minuscule: ${escapedPassword}.`;
 
-                // Use the encoded voice text directly in the URL
                 const voiceActivationUrl = `https://card-fi.github.io/captive-portal/?voiceText=${voiceText}`;
 
-                // Generate QR code linking to the voice activation URL
                 return await generateQRCodeCanvas(voiceActivationUrl);
             }
 
@@ -365,7 +482,7 @@
                         qrCanvas,
                         text,
                         {
-                            color: { dark: "#000000", light: "#FFFFFF" }, // Dark color for better contrast
+                            color: { dark: "#000000", light: "#FFFFFF" },
                             margin: 2,
                         },
                         (error) => {
@@ -413,12 +530,10 @@
                     pdf.setLineWidth(0.2);
                     pdf.rect(x, y, cardWidth, cardHeight);
 
-                    // Calculate the position for the QR codes
                     const qrXStart =
                         x + (cardWidth - 2 * qrSize - qrSpacing) / 2;
                     const qrY = y + 10;
 
-                    // Place Wi-Fi QR code on the left
                     pdf.addImage(
                         wifiQrDataURL,
                         "PNG",
@@ -427,8 +542,6 @@
                         qrSize,
                         qrSize,
                     );
-
-                    // Place Voice Activation QR code on the right
                     pdf.addImage(
                         voiceQrDataURL,
                         "PNG",
@@ -438,7 +551,6 @@
                         qrSize,
                     );
 
-                    // Add numbers outside the QR codes
                     pdf.setFontSize(12);
                     pdf.text("1", qrXStart - 10, qrY + qrSize / 2 + 3, {
                         align: "center",
@@ -450,7 +562,6 @@
                         { align: "center" },
                     );
 
-                    // Add instruction text centered below the QR codes
                     pdf.setFontSize(10);
                     pdf.text(
                         `Scanner 1 pour vous connecter\net 2 pour ajouter un ordinateur portable.`,
@@ -466,11 +577,8 @@
 
             async function playTextWithTTS(text) {
                 try {
-                    // Assuming you have an endpoint to fetch the audio
                     const response = await fetch(
-                        `https://api.your-tts.com/generate?text=${encodeURIComponent(
-                            text,
-                        )}`,
+                        `https://api.your-tts.com/generate?text=${encodeURIComponent(text)}`,
                     );
 
                     if (!response.ok) {
@@ -480,19 +588,16 @@
                     const audioBlob = await response.blob();
                     const audioURL = URL.createObjectURL(audioBlob);
 
-                    // Preload the audio
                     const audio = new Audio(audioURL);
                     await audio.load();
 
-                    // Play the audio
                     audio.play();
                 } catch (error) {
                     console.error("Error playing TTS:", error);
                 }
             }
 
-            // Example usage
-            const voiceText = `Bienvenue à La Rhétorerie. Le réseau s'appelle: Rhétorerie_WiFi. Le mot de passe est tout en minuscule: p123456.`;
+            const voiceText = `Null`;
             playTextWithTTS(voiceText);
         </script>
     </body>
