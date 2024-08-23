@@ -4,48 +4,62 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wi-Fi Voice Assistant</title>
-    <script src="https://code.responsivevoice.org/responsivevoice.js?key=1DwhJhuM"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f2f5;
-            color: #1c1e21;
+            font-family: "Poppins", sans-serif;
+            margin: 0;
+            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
+            min-height: 100vh;
+            color: #fff;
+            background: url("https://www.chateaubrachet.com/wp-content/uploads/sites/205/2021/09/tempImagedGKLTi.jpg") no-repeat center center fixed;
+            background-size: cover;
         }
+
         .container {
-            text-align: center;
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
             padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
+            width: 85%;
             max-width: 400px;
-            width: 90%;
+            text-align: center;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            transition: transform 0.5s ease, opacity 0.5s ease;
         }
+
         h1 {
             font-size: 24px;
+            color: #fff;
             margin-bottom: 20px;
-            color: #2c5c17;
+            font-weight: 600;
         }
+
         p {
             font-size: 16px;
-            color: #606770;
+            color: #fff;
+            margin-bottom: 20px;
         }
+
         button {
             padding: 10px 20px;
             font-size: 16px;
-            background-color: #2c5c17;
+            background: #000;
             color: #fff;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: background 0.3s ease;
         }
+
         button:hover {
-            background-color: #4b4e38;
+            background: #333;
         }
     </style>
 </head>
@@ -56,6 +70,7 @@
         <button onclick="playVoice()">Écouter les identifiants Wi-Fi</button>
     </div>
 
+    <script src="https://code.responsivevoice.org/responsivevoice.js?key=1DwhJhuM"></script>
     <script>
         function getVoiceText() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -72,7 +87,6 @@
             }
         }
 
-        // Automatically play the voice message on page load
         window.onload = function() {
             playVoice();
         };
