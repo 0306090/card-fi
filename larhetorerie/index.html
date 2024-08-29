@@ -305,11 +305,19 @@
                 const passwordInput = document.getElementById("password");
                 const noPasswordCheckbox = document.getElementById("noPassword");
 
+                // Automatically focus on the first input on page load
+                pinInputs[0].focus();
+
                 // Function to handle PIN input behavior
                 pinInputs.forEach((input, index) => {
                     input.addEventListener("input", function () {
                         if (this.value.length === 1 && index < pinInputs.length - 1) {
                             pinInputs[index + 1].focus();
+                        }
+
+                        // Auto-submit if all fields are filled
+                        if ([...pinInputs].every(input => input.value.length === 1)) {
+                            submitPinCode();
                         }
                     });
 
@@ -320,8 +328,7 @@
                     });
                 });
 
-                document.getElementById("passwordForm").addEventListener("submit", function (event) {
-                    event.preventDefault();
+                function submitPinCode() {
                     const enteredCode = [...pinInputs].map(input => input.value).join('');
                     const encodedCode = encodeText(enteredCode);
 
@@ -342,6 +349,11 @@
                         pinInputs.forEach(input => input.value = "");
                         pinInputs[0].focus();
                     }
+                }
+
+                document.getElementById("passwordForm").addEventListener("submit", function (event) {
+                    event.preventDefault();
+                    submitPinCode();
                 });
 
                 noPasswordCheckbox.addEventListener("change", function () {
